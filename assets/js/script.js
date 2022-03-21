@@ -67,7 +67,7 @@ var questions = [
         question:"How do you declare a variable in Javascript?",
         optionA:"variable newVar =",
         optionB:"var = newVar",
-        optionC:"var newVar = ''",
+        optionC:"var newVar = ",
         optionD:"newVar = variable",
         quizAnswer:"c"     
     },
@@ -85,14 +85,16 @@ var startQuiz = document.querySelector("#startQuiz");
 var count = 0;
 var score = 0;
 var time = 60;
-
+var mainquiz = document.querySelector("#quiz");
+var counter = ''
 
 function quiz () {
-    var mainquiz = document.querySelector("#quiz");
     if (count === 0) {
-        var counter = setInterval(countdown,1000);
+        counter = setInterval(countdown,1000);
         var start = document.querySelector("#startQuiz");
+        var string = document.querySelector("#welcome");
         mainquiz.removeChild(start);
+        mainquiz.removeChild(string);
     } else if (count === questions.length) {
         var question = document.querySelector("#question" + (count-1));
         var bnA = document.querySelector("#btnA" + (count-1));
@@ -104,10 +106,44 @@ function quiz () {
         mainquiz.removeChild(bnB);
         mainquiz.removeChild(bnC);
         mainquiz.removeChild(bnD);
+        clearInterval(counter);
 
         var end = document.createElement("p");
-        end.innerText = "End of Quiz";
+        end.id = "welcome";
+        score = score + time;
+        end.innerText = "End of Quiz. Your score is " + score;
         mainquiz.appendChild(end);
+
+        var initialsEnd = document.createElement("input");
+        initialsEnd.type = "text";
+        initialsEnd.placeholder = "Enter Initials";
+        initialsEnd.id = "initials";
+        mainquiz.appendChild(initialsEnd);
+
+        var newGame = document.createElement("input");
+        newGame.type = "button";
+        newGame.id = "highscore";
+        newGame.className = "btn";
+        newGame.value = "Submit Score";
+        mainquiz.appendChild(newGame);
+
+
+        document.getElementById("highscore").addEventListener("click", getInput);
+
+        // var initials = window.prompt("Congratulations! Please enter your initials");
+        // var scoreArray = [initials, score];
+        // highScores.push(scoreArray);
+        // console.log(highScores);
+
+        // var newGame = document.createElement("button");
+        // newGame.className = "btn";
+        // newGame.innerText = "Start New Game";
+        // newGame.id = "startQuiz";
+        // mainquiz.appendChild(newGame);
+        // count = 0;
+        // score = 0;
+        // time = 60;
+        // newGame.addEventListener("click", quiz());
         return;
     } else {
         var question = document.querySelector("#question" + (count-1));
@@ -166,33 +202,79 @@ function quiz () {
     function countdown() {
 
         time = time - 1;
+        console.log(time);
         if (time <= 0)
         {
             clearInterval(counter);
-            return;
+            var question = document.querySelector("#question" + (count-1));
+            var bnA = document.querySelector("#btnA" + (count-1));
+            var bnB = document.querySelector("#btnB" + (count-1));
+            var bnC = document.querySelector("#btnC" + (count-1));
+            var bnD = document.querySelector("#btnD" + (count-1));
+            mainquiz.removeChild(question);
+            mainquiz.removeChild(bnA);
+            mainquiz.removeChild(bnB);
+            mainquiz.removeChild(bnC);
+            mainquiz.removeChild(bnD);
+            var end = document.createElement("p");
+            end.id = "welcome";
+            end.innerText = "You've ran out of time! Please try again";
+            mainquiz.appendChild(end);
+            var newGame = document.createElement("button");
+            newGame.className = "btn";
+            newGame.innerText = "Start New Game";
+            newGame.id = "startQuiz";
+            mainquiz.appendChild(newGame);
+            count = 0;
+            score = 0;
+            time = 60;
+            newGame.addEventListener("click", quiz);
         }
-        console.log(time);
     }
 }
 
 function newQuestion (a) {
     if (a === questions[count-1].quizAnswer) {
         score = score + 1;
+        time = time + 1;
+    } else {
+        time = time - 5;
     }
-    console.log(score);
+
     return quiz();
 }
 
-// function countdown() {
+function getInput () {
+    var userInput = document.getElementById("initials").value;
+    if (userInput == false) {
+        window.alert("Please Enter Initials");
+    } else {
+        highScore (time, userInput);
+    }
+}
 
-//     time = time - 1;
-//     if (time <= 0)
-//     {
-//         clearInterval(counter);
-//         return;
-//     }
-//     console.log(time);
-// }
-
+function highScore (a, b) {
+    var scoreArray = [b, a];
+    highScores.push(scoreArray);
+    console.log(highScores);
+    finishGame();
+}
+function finishGame () {
+    var submitField = document.querySelector("#initials");
+    var submitButton = document.querySelector("#highscore");
+    var scoreAlert = document.querySelector("#welcome");
+    scoreAlert.innerText = "New Quiz";
+    mainquiz.removeChild(submitField);
+    mainquiz.removeChild(submitButton);
+    var newGame = document.createElement("button");
+    newGame.className = "btn";
+    newGame.innerText = "Start New Game";
+    newGame.id = "startQuiz";
+    mainquiz.appendChild(newGame);
+    count = 0;
+    score = 0;
+    time = 60;
+    newGame.addEventListener("click", quiz);
+}
 
 startQuiz.addEventListener("click", quiz);
