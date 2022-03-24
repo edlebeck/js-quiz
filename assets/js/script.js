@@ -86,7 +86,11 @@ var count = 0;
 var score = 0;
 var time = 60;
 var mainquiz = document.querySelector("#quiz");
-var counter = ''
+var counter = '';
+var answerFeedback = '';
+
+var timerDisplay = document.querySelector("#timer");
+timerDisplay.innerText = "Time:" + time;
 
 function quiz () {
     if (count === 0) {
@@ -101,6 +105,8 @@ function quiz () {
         var bnB = document.querySelector("#btnB" + (count-1));
         var bnC = document.querySelector("#btnC" + (count-1));
         var bnD = document.querySelector("#btnD" + (count-1));
+        var answer = document.querySelector("#ans" + (count-1));
+        answer.innerText = answerFeedback;
         mainquiz.removeChild(question);
         mainquiz.removeChild(bnA);
         mainquiz.removeChild(bnB);
@@ -129,21 +135,6 @@ function quiz () {
 
 
         document.getElementById("highscore").addEventListener("click", getInput);
-
-        // var initials = window.prompt("Congratulations! Please enter your initials");
-        // var scoreArray = [initials, score];
-        // highScores.push(scoreArray);
-        // console.log(highScores);
-
-        // var newGame = document.createElement("button");
-        // newGame.className = "btn";
-        // newGame.innerText = "Start New Game";
-        // newGame.id = "startQuiz";
-        // mainquiz.appendChild(newGame);
-        // count = 0;
-        // score = 0;
-        // time = 60;
-        // newGame.addEventListener("click", quiz());
         return;
     } else {
         var question = document.querySelector("#question" + (count-1));
@@ -151,11 +142,13 @@ function quiz () {
         var bnB = document.querySelector("#btnB" + (count-1));
         var bnC = document.querySelector("#btnC" + (count-1));
         var bnD = document.querySelector("#btnD" + (count-1));
+        var answer = document.querySelector("#ans" + (count-1));
         mainquiz.removeChild(question);
         mainquiz.removeChild(bnA);
         mainquiz.removeChild(bnB);
         mainquiz.removeChild(bnC);
         mainquiz.removeChild(bnD);
+        mainquiz.removeChild(answer);
     }
 
     var q = document.createElement("p");
@@ -187,6 +180,11 @@ function quiz () {
     btnD.id = "btnD" + count;
     mainquiz.appendChild(btnD);
 
+    var answer = document.createElement("p");
+    answer.innerText = answerFeedback;
+    answer.id = "ans" + count;
+    mainquiz.appendChild(answer);
+
     var bnA = document.querySelector("#btnA" + count);
     var bnB = document.querySelector("#btnB" + count);
     var bnC = document.querySelector("#btnC" + count);
@@ -202,7 +200,7 @@ function quiz () {
     function countdown() {
 
         time = time - 1;
-        console.log(time);
+        timerDisplay.innerText = "Time:" + time;
         if (time <= 0)
         {
             clearInterval(counter);
@@ -211,11 +209,13 @@ function quiz () {
             var bnB = document.querySelector("#btnB" + (count-1));
             var bnC = document.querySelector("#btnC" + (count-1));
             var bnD = document.querySelector("#btnD" + (count-1));
+            var answer = document.querySelector("#ans" + (count-1));
             mainquiz.removeChild(question);
             mainquiz.removeChild(bnA);
             mainquiz.removeChild(bnB);
             mainquiz.removeChild(bnC);
             mainquiz.removeChild(bnD);
+            mainquiz.removeChild(answer);
             var end = document.createElement("p");
             end.id = "welcome";
             end.innerText = "You've ran out of time! Please try again";
@@ -237,8 +237,10 @@ function newQuestion (a) {
     if (a === questions[count-1].quizAnswer) {
         score = score + 1;
         time = time + 1;
+        answerFeedback = "Correct";
     } else {
         time = time - 5;
+        answerFeedback = "Incorrect";
     }
 
     return quiz();
@@ -256,14 +258,15 @@ function getInput () {
 function highScore (a, b) {
     var scoreArray = [b, a];
     highScores.push(scoreArray);
-    console.log(highScores);
     finishGame();
 }
 function finishGame () {
     var submitField = document.querySelector("#initials");
     var submitButton = document.querySelector("#highscore");
     var scoreAlert = document.querySelector("#welcome");
-    scoreAlert.innerText = "New Quiz";
+    var answer = document.querySelector("#ans" + (count-1));
+    mainquiz.removeChild(answer);
+    scoreAlert.innerText = "Welcome";
     mainquiz.removeChild(submitField);
     mainquiz.removeChild(submitButton);
     var newGame = document.createElement("button");
@@ -274,6 +277,7 @@ function finishGame () {
     count = 0;
     score = 0;
     time = 60;
+    answerFeedback = '';
     newGame.addEventListener("click", quiz);
 }
 
