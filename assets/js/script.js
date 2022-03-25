@@ -80,8 +80,10 @@ var questions = [
         quizAnswer:"a"     
     },
 ];
+// get score from local storage
 var storedScores = localStorage.getItem("scores");
 var highScores = [];
+// fill highScores array if any scores in local storage
 if (storedScores != null) {
     highScores = JSON.parse(storedScores);
 };
@@ -93,17 +95,25 @@ var mainquiz = document.querySelector("#quiz");
 var counter = '';
 var answerFeedback = '';
 var scoreList = document.querySelector("#scores");
+
+// Timer display
 var timerDisplay = document.querySelector("#timer");
 timerDisplay.innerText = "Time:" + time;
 
+// Quiz function
 function quiz () {
+    // if first question
     if (count === 0) {
+        // start timer
         counter = setInterval(countdown,1000);
+        // remove text and button from screen
         var start = document.querySelector("#startQuiz");
         var string = document.querySelector("#welcome");
         mainquiz.removeChild(start);
         mainquiz.removeChild(string);
+    // if last question
     } else if (count === questions.length) {
+        // clear question and buttons
         var question = document.querySelector("#question" + (count-1));
         var bnA = document.querySelector("#btnA" + (count-1));
         var bnB = document.querySelector("#btnB" + (count-1));
@@ -116,14 +126,15 @@ function quiz () {
         mainquiz.removeChild(bnB);
         mainquiz.removeChild(bnC);
         mainquiz.removeChild(bnD);
+        // stop timer
         clearInterval(counter);
-
+        // create end of quiz report
         var end = document.createElement("p");
         end.id = "welcome";
         score = score + time;
         end.innerText = "End of Quiz. Your score is " + score;
         mainquiz.appendChild(end);
-
+        // create input for initials
         var initialsEnd = document.createElement("input");
         initialsEnd.type = "text";
         initialsEnd.placeholder = "Enter Initials";
@@ -137,10 +148,11 @@ function quiz () {
         newGame.value = "Submit Score";
         mainquiz.appendChild(newGame);
 
-
+        // function to get initials
         document.getElementById("highscore").addEventListener("click", getInput);
         return;
     } else {
+        // remove question and buttons for all other questions
         var question = document.querySelector("#question" + (count-1));
         var bnA = document.querySelector("#btnA" + (count-1));
         var bnB = document.querySelector("#btnB" + (count-1));
@@ -154,12 +166,12 @@ function quiz () {
         mainquiz.removeChild(bnD);
         mainquiz.removeChild(answer);
     }
-
+    // create question
     var q = document.createElement("p");
     q.innerText = questions[count].question;
     q.id = 'question' + count;
     mainquiz.appendChild(q);
-
+    // create buttons
     var btnA = document.createElement("button");
     btnA.className = "btn";
     btnA.innerText = questions[count].optionA;
@@ -183,7 +195,7 @@ function quiz () {
     btnD.innerText = questions[count].optionD;
     btnD.id = "btnD" + count;
     mainquiz.appendChild(btnD);
-
+    // last question feedback
     var answer = document.createElement("p");
     answer.innerText = answerFeedback;
     answer.id = "ans" + count;
@@ -193,21 +205,25 @@ function quiz () {
     var bnB = document.querySelector("#btnB" + count);
     var bnC = document.querySelector("#btnC" + count);
     var bnD = document.querySelector("#btnD" + count);
+    // question counter
     count = count + 1;
 
-    
+    // click event for answer
     bnA.addEventListener("click", function(){newQuestion("a");});
     bnB.addEventListener("click", function(){newQuestion("b");});
     bnC.addEventListener("click", function(){newQuestion("c");});
     bnD.addEventListener("click", function(){newQuestion("d");});
-
+    // countdown function
     function countdown() {
 
         time = time - 1;
         timerDisplay.innerText = "Time:" + time;
+        // if time runs out
         if (time <= 0)
         {
+            // stop timer
             clearInterval(counter);
+            // remove question and buttons
             var question = document.querySelector("#question" + (count-1));
             var bnA = document.querySelector("#btnA" + (count-1));
             var bnB = document.querySelector("#btnB" + (count-1));
@@ -220,6 +236,8 @@ function quiz () {
             mainquiz.removeChild(bnC);
             mainquiz.removeChild(bnD);
             mainquiz.removeChild(answer);
+
+            // create game over report
             var end = document.createElement("p");
             end.id = "welcome";
             end.innerText = "You've ran out of time! Please try again";
@@ -229,14 +247,16 @@ function quiz () {
             newGame.innerText = "Start New Game";
             newGame.id = "startQuiz";
             mainquiz.appendChild(newGame);
+            // reset variables
             count = 0;
             score = 0;
             time = 60;
+            // start new quiz
             newGame.addEventListener("click", quiz);
         }
     }
 }
-
+// function to count quiz variables
 function newQuestion (a) {
     if (a === questions[count-1].quizAnswer) {
         score = score + 1;
@@ -246,31 +266,39 @@ function newQuestion (a) {
         time = time - 5;
         answerFeedback = "Incorrect";
     }
-
+    // start quiz function for next count
     return quiz();
 };
-
+// function to get initials
 function getInput () {
+    // get value of user input
     var userInput = document.getElementById("initials").value;
+    userInput = userInput.toUpperCase();
+    // user input check
     if (userInput == false) {
         window.alert("Please Enter Initials");
     } else {
+        // highScore function call
         highScore (score, userInput);
     }
-}// items.sort(function (a, b){
-//   return a.value - b.value;
-// });
+}
 
 function highScore (a, b) {
+    // initialize temporary score holder
     var scoreArray = { initials : b, score : a};
+    // push new input to highScores array
     highScores.push(scoreArray);
+    // sort scores
     highScores.sort(function(a, b){
         return b.score - a.score
     });
+    // displayHighScores function call
     displayHighscores();
+    // finishGame function call
     finishGame();
 }
 function finishGame () {
+    // clear and reset elements on page
     var submitField = document.querySelector("#initials");
     var submitButton = document.querySelector("#highscore");
     var scoreAlert = document.querySelector("#welcome");
@@ -284,36 +312,42 @@ function finishGame () {
     newGame.innerText = "Start New Game";
     newGame.id = "startQuiz";
     mainquiz.appendChild(newGame);
+    // reset variables
     count = 0;
     score = 0;
     time = 60;
     answerFeedback = '';
+    // send scores to local storage
     var scores = localStorage.setItem("scores", JSON.stringify(highScores))
+    // click event to start new quiz
     newGame.addEventListener("click", quiz);
 }
-
+// display function
 function displayHighscores () {
+    // loop for scores up to maximum 10
     for (i = 0; i < highScores.length && i < 10; i++) {
+        // if this is the last score, create new element
         if (i === (highScores.length-1)) {
-        var listItem = document.createElement("li");
-        listItem.id = "hs" + i;
-        listItem.className = "ordered"
-        listItem.setAttribute("style", "display: inline");
-        listItem.style.marginRight = "20px"
+            var listItem = document.createElement("li");
+            listItem.id = "hs" + i;
+            listItem.className = "ordered"
+            listItem.setAttribute("style", "display: inline");
+            listItem.style.marginRight = "20px"
         // listItem.setAttribute("style", "list-style-type:number")
         listItem.innerText = (i+1) + ': ' + highScores[i].initials + ': ' + highScores[i].score;
         scoreList.appendChild(listItem);
         } else {
             var fillScore = document.querySelector("#hs" + i);
+            // if this is the first time the page loads, create element
             if (fillScore == null) {
                 var listItem = document.createElement("li");
                 listItem.id = "hs" + i;
                 listItem.className = "ordered"
                 listItem.setAttribute("style", "display: inline");
                 listItem.style.marginRight = "20px"
-                // listItem.setAttribute("style", "list-style-type:number")
                 listItem.innerText = (i+1) + ': ' + highScores[i].initials + ': ' + highScores[i].score;
                 scoreList.appendChild(listItem);
+                // otherwise fill element
             } else {
                 fillScore.innerText = (i+1) + ': ' + highScores[i].initials + ': ' + highScores[i].score;
             }
