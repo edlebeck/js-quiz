@@ -176,24 +176,28 @@ function quiz () {
     btnA.className = "btn";
     btnA.innerText = questions[count].optionA;
     btnA.id = "btnA" + count;
+    btnA.setAttribute("style", "display: block");
     mainquiz.appendChild(btnA);
 
     var btnB = document.createElement("button");
     btnB.className = "btn";
     btnB.innerText = questions[count].optionB;
     btnB.id = "btnB" + count;
+    btnB.setAttribute("style", "display: block");
     mainquiz.appendChild(btnB);
 
     var btnC = document.createElement("button");
     btnC.className = "btn";
     btnC.innerText = questions[count].optionC;
     btnC.id = "btnC" + count;
+    btnC.setAttribute("style", "display: block");
     mainquiz.appendChild(btnC);
 
     var btnD = document.createElement("button");
     btnD.className = "btn";
     btnD.innerText = questions[count].optionD;
     btnD.id = "btnD" + count;
+    btnD.setAttribute("style", "display: block");
     mainquiz.appendChild(btnD);
     // last question feedback
     var answer = document.createElement("p");
